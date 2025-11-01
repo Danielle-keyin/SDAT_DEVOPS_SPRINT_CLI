@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class Main {
     private static final String BASE_URL = "http://localhost:8080";
-
+//comment to test PR
     public static void main(String[] args) {
         ApiClient http = new ApiClient(BASE_URL);
         CityApi cities = new CityApi(http);

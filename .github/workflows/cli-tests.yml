@@ -1,0 +1,49 @@
+name: CLI Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".github/workflows/**"
+  push:
+    branches: [ main ]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Build & Test (Maven)
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['21', '24']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Maven test
+        run: mvn -B -q clean test
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-java-${{ matrix.java }}
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**

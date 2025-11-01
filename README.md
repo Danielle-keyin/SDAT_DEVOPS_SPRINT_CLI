@@ -1,0 +1,1 @@
+[![CLI Tests](https://github.com/Danielle-keyin/SDAT_DEVOPS_SPRINT_CLI/actions/workflows/cli-tests.yml/badge.svg?branch=main)](https://github.com/Danielle-keyin/SDAT_DEVOPS_SPRINT_CLI/actions/workflows/cli-tests.yml)

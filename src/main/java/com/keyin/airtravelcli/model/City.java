@@ -1,10 +1,17 @@
-@Entity
+package com.keyin.airtravelcli.model;
+
 public class City {
-    @Id @GeneratedValue private Long id;
-    @Column(nullable=false) private String name;
+    private Long id;
+    private String name;
     private String state;
     private Integer population;
 
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
-    private List<Airport> airports = new ArrayList<>();
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getState() { return state; }
+    public Integer getPopulation() { return population; }
+
+    @Override public String toString() {
+        return "#" + id + " " + name + (state != null ? ", " + state : "");
+    }
 }

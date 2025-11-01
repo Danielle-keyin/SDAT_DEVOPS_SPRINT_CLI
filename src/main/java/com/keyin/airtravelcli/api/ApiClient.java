@@ -1,30 +1,52 @@
 package com.keyin.airtravelcli.api;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+
 public class ApiClient {
     private final String baseUrl;
-    private final HttpClient http = HttpClient.newHttpClient();
+    private final HttpClient http;
 
-    public ApiClient(String baseUrl) {
-        this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length()-1) : baseUrl;
+    public ApiClient() {
+        this("http://localhost:8080");
     }
 
-    public String get(String path) {
+    public ApiClient(String baseUrl) {
+        String b = baseUrl == null ? "" : baseUrl.trim();
+        if (b.endsWith("/")) {
+            b = b.substring(0, b.length() - 1);
+        }
+        this.baseUrl = b;
+        this.http = HttpClient.newHttpClient();
+    }
+
+
+    public String buildUrl(String path) {
+        if (path == null || path.isBlank()) return baseUrl;
+        String p = path.startsWith("/") ? path : "/" + path;
+        return baseUrl + p;
+    }
+
+
+    public String get(String endpoint) {
         try {
-            HttpRequest req = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + path))
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(buildUrl(endpoint)))
                     .GET()
-                    .header("Accept", "application/json")
                     .build();
-            HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() >= 200 && resp.statusCode() < 300) return resp.body();
-            throw new RuntimeException("GET " + path + " -> " + resp.statusCode() + " : " + resp.body());
-        } catch (Exception e) {
+
+            HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Request failed: " + e.getMessage(), e);
         }
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
     }
 }
